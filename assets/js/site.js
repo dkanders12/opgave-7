@@ -34,20 +34,56 @@ myIdSearchButton.addEventListener("click", () => {
 
 // fetch functions --------------------------------------------------------------------
 // your code goes here
+function getRecipesByFirstLetter(letter) {
+  const apiUrl = `https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`;
 
+  fetch(apiUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      setupResultView(data);
+    })
+    .catch((error) => {
+      setupResultView({ message: "Fejl ved hentning af opskrifter" });
+      console.error(error);
+    });
+}
+function setupResultView(myData) {
+  switch (serchMode) {
+    case "firstLetterSearch":
+      if (myData.meals) {
+        console.table(myData.meals);
+        let myText = "";
 
+        myData.meals.forEach((myMeal) => {
+          myText += myMeal.strMeal + ", ";
+        });
 
+        myResultElement.textContent = myText;
+      } else {
+        myResultElement.textContent = "Ingen opskrifter fundet.";
+      }
+      break;
 
+    // Andre tilstande og visningshåndtering kan tilføjes her
 
+    default:
+      console.warn("ooops no data to show from setupResultView");
+      break;
+  }
+}
 
-
+myfirstLetterSearchButton.addEventListener("click", () => {
+  serchMode = "firstLetterSearch";
+  const firstLetter = myfirstLetterInput.value;
+  getRecipesByFirstLetter(firstLetter);
+});
 
 // view code --------------------------------------------------------------------------
 
 function setupResultView(myData) {
   switch (serchMode) {
     case "firstLetterSearch":
-      console.log(myData);
+      console.table(myData);
       // do view stuff with the data here
       break;
 
